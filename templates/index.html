@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Picsent</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/shop-item.css" rel="stylesheet">
+
+  </head>
+  <style type="text/css">
+    .fixed {
+        position: fixed;
+}
+  </style>
+
+  <body style="background-color: #f0f0f0;">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <h2 class="navbar-brand" href="#">Picsent</h2>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Notification</a>
+            </li>
+            
+            <li class="nav-item">
+
+              <a class="nav-link" href="#">Hi {{user.first_name}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/user_logout/">Log out</a>
+            </li>
+
+            <form action="/searchuser/" method="post" >{% csrf_token %}
+            <div class="form-group">
+              <input type="text" name="search" class="form-control input-sm" placeholder="Search Users...">
+             
+            </div>
+            </form>
+
+          </ul>
+        </div>
+      </div>
+    </nav>
+<br><br><br>
+    <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" >
+          <h1 class="my-4"></h1>
+          <div class="list-group">
+            <a href="#" class="list-group-item active">Today Posts</a>
+            <a href="#" class="list-group-item">Last Seven Days
+            <a href="#" class="list-group-item">Last Months</a>
+          </div>
+        </div>
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+<br>
+        <div class="alert alert-primary" id="uploadIt" style="display: none;">
+          <form action="/upload/" method="post" enctype="multipart/form-data"> {% csrf_token %}
+            <h5>Please Select Picture</h5>
+           
+
+            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+
+            <p>
+            {{ form.docfile.errors }}
+            {{ form.docfile }}
+            </p>
+
+            <br>
+            <input type="text" name="caption" class="form-control" placeholder="Some lines about pic...">
+            <br>
+            <button class="btn btn-warning btn-sm" type="submit">Upload</button>
+          </form>
+        </div>
+
+        <div class="alert alert-primary" id="postIt" style="display: block;">
+          
+          <form action="/post/" method="post"> {% csrf_token %}
+            <label><h5>What is in Your mind...</h5>
+          </label>
+          <br><br><br>
+            <textarea type="text" name="post" class="form-control" cols="5"> </textarea>
+            <br><br>
+            <button class="btn btn-warning btn-sm" type="submit">Post</button>
+          </form>
+        </div>        
+
+
+        <div class="row">
+          <button class="alert alert-info col-lg-6 col-md-6 col-sm-6 col-xs-6" onclick="document.getElementById('postIt').style.display='block'; document.getElementById('uploadIt').style.display='none';">
+            <p>Post Something...</p>
+          </button>
+
+          <button class="alert alert-danger col-lg-6 col-md-6 col-sm-6 col-xs-6" onclick="document.getElementById('uploadIt').style.display='block'; document.getElementById('postIt').style.display='none';">
+            <p>Upload Something...</p>
+          </button>
+
+        </div>
+<hr>  
+      {% for abcd in picObject %}
+          <div class="card mt-4">
+
+          <div class="media" style="margin-top: 8px; margin-left: 8px; margin-bottom: 6px; margin-right: 4px;">
+            <div class="media-left">
+              <img src="https://www.w3schools.com/w3css/img_avatar3.png" class="media-object" style="width:40px">
+            </div>
+            <div class="media-body">
+            <strong>
+              <p class="media-heading" style="margin-top: 6px; margin-left: 15px;">{{abcd.uploadBy.user.first_name}} {{abcd.uploadBy.user.last_name}}</p>
+            </strong>
+            </div>
+
+          </div>
+          <div>
+            <p style="color: #BEBEBE; margin-left: 22px;">{{abcd.uploadedOn}} at {{abcd.uploadedTim}}</p>
+          </div>
+           <!--  <h5 style="margin-top: 8px; margin-left: 8px;"> {{abcd.uploadBy.user.first_name}}</h5>
+ -->       {% if abcd.image_is %}
+            <img class="card-img-top img-fluid" src="{{abcd.image_is.url}}" alt="">
+          {% endif %}
+            <div class="card-body">
+             <div class="fa-hover col-md-3 col-sm-4 col-xs-12"><a href="#/comment-o"><i class="fa fa-comment-o"></i></a>
+              </div>
+              <p class="card-text">{{abcd.image_caption}}</p>
+              
+              <p style="color: #BEBEBE;">Likes: Comments:</p>
+              <!-- <button data-toggle="modal" data-target="#{{abcd.id}}" class="btn btn-success btn-sm">Comment</button> -->
+            </div>
+
+          </div>
+          <!-- /.card -->
+     
+        {% for pqr in comments %}
+           {% if pqr.commentedImage.id = abcd.id %}
+          <div class="card card-outline-secondary my-4">
+            <div class="card-header">
+             Posted by {{pqr.commentBy.user.username}}
+            </div>
+            
+            <div class="card-body">
+             
+            <div class="media" style="margin-top: 8px; margin-left: 8px; margin-bottom: 6px; margin-right: 4px;">
+            <div class="media-left">
+              <img src="https://www.w3schools.com/w3css/img_avatar3.png" class="media-object img-circle" style="width:40px">
+            </div>
+            <div class="media-body">
+            <strong>
+              <p class="media-heading" style="margin-top: 6px; margin-left: 15px;">{{pqr.comment_is}}</p>
+            </strong>
+            </div>
+          </div>
+              <small class="text-muted"> {{pqr.commentOn}} at {{pqr.commentTim}}</small>
+            </div>
+           
+          </div>
+          <!-- /.card -->
+         
+           {% endif %}
+        {% endfor %}
+      <hr>
+           <!-- comment popup -->
+                            <div class="">
+                              <!-- Trigger the modal with a button -->
+                              
+                              <!-- Modal -->
+                              <div class="modal fade" id="{{abcd.id}}" role="dialog">
+                                <div class="modal-dialog">
+                                
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                      
+                                    </div>
+                                    <div class="modal-body">
+                                      <form action="/makeYourComment/" method="post" autocomplete="off">{% csrf_token %}
+
+                                        <input type="hidden" name="abcId" value="{{question.id}}">
+
+                                        <textarea name="comment" class="form-control" rows="4" placeholder="Comment here" required="Please Enter your comment"></textarea>
+                                          <br>
+
+                                        <div class="col-md-offset-10 col-sm-offset-10 col-xs-offset-10">
+                                          <button class="btn btn-info btn-sm" type="submit">Submit</button>
+                                        </div>
+
+                                      </form>
+                                    </div>
+                                    <!--  -->
+                                  </div>
+                                  
+                                </div>
+                              </div>
+                              
+                            
+                            </div>
+      <!-- </div> -->
+<!-- commemt popup ends -->
+        {% endfor %}
+        </div>
+        <!-- /.col-lg-9 -->
+
+      </div>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Picsent 2017</p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/popper/popper.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  </body>
+
+</html>
